@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Core.Entities;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Core.Entities.OrderAggregate;
 
 namespace Infrastructure.Data
 {
@@ -76,6 +77,28 @@ namespace Infrastructure.Data
                         context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Products ON");
                         await context.SaveChangesAsync();
                         context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.Products OFF");
+                    }
+                    finally
+                    {
+                        context.Database.CloseConnection();
+                    }  
+                }
+                if (!context.DeliveryMethods.Any())
+                {
+                    var dmData = File.ReadAllText("../Infrastructure/Data/SeedData/delivery.json");
+                    var methods = JsonSerializer.Deserialize<List<DeliveryMethod>>(dmData);
+
+                    foreach (var item in methods)
+                    {
+                        context.DeliveryMethods.Add(item);
+                    }
+
+                    context.Database.OpenConnection();
+                    try
+                    {
+                        context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.DeliveryMethods ON");
+                        await context.SaveChangesAsync();
+                        context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.DeliveryMethods OFF");
                     }
                     finally
                     {
