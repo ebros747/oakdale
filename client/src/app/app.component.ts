@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
       console.log('loaded user');
     }, error => {
       console.log(error);
-    });
+    })
   }
 
   loadBasket() {
@@ -35,8 +35,8 @@ export class AppComponent implements OnInit {
         console.log('initialised basket');
       }, error => {
         console.log(error);
-      });
-  }
+      })
+    }
 
   }
 
